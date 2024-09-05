@@ -37,7 +37,7 @@ dynamic = [
   "version",
 ]
 dependencies = [
-  "litestar",
+  "litestar[standard]",
 ]
 
 urls.Documentation = "https://github.com/Tobi-De/litestar-tailwind-cli#readme"
@@ -46,12 +46,6 @@ urls.Source = "https://github.com/Tobi-De/litestar-tailwind-cli"
 
 [tool.hatch.version]
 path = "src/litestar_tailwind_cli/__about__.py"
-
-[tool.hatch.envs.default]
-dependencies = [
-  "jinja2",
-  "uvicorn",
-]
 
 [tool.hatch.envs.types]
 extra-dependencies = [

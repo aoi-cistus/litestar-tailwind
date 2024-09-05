@@ -13,29 +13,29 @@ from rich.progress import Progress
 from rich.progress import SpinnerColumn
 from rich.progress import TextColumn
 
-URL_BASE = "https://github.com/tailwindlabs/tailwindcss"
 OS_TYPE = platform.system().lower().replace("win32", "windows").replace("darwin", "macos")
 ARCHITECTURE = platform.machine()
 
 
-def get_asset_url(version: str) -> str:
-    asset_name_ = asset_name()
+def get_asset_url(version: str, src_repo: str, asset_name: str) -> str:
+    asset_name_ = full_asset_name(asset_name)
+    base_url = f"https://github.com/{src_repo}/releases"
     if version.lower() == "latest":
-        return f"{URL_BASE}/releases/latest/download/{asset_name_}"
-    return f"{URL_BASE}/releases/download/{version}/{asset_name_}"
+        return f"{base_url}/latest/download/{asset_name_}"
+    return f"{base_url}/download/v{version}/{asset_name_}"
 
 
 class UnknownArchitectureError(Exception):
     pass
 
 
-def asset_name() -> str:
+def full_asset_name(asset_name: str) -> str:
     """Formats target name for provided OS name and CPU ARCHITECTURE."""
     extension = ".exe" if OS_TYPE == "windows" else ""
     if ARCHITECTURE in ("amd64", "x86_64"):
-        return f"tailwindcss-{OS_TYPE}-x64{extension}"
+        return f"{asset_name}-{OS_TYPE}-x64{extension}"
     if ARCHITECTURE in ("arm64", "aarch64"):
-        return f"tailwindcss-{OS_TYPE}-arm64{extension}"
+        return f"{asset_name}-{OS_TYPE}-arm64{extension}"
     msg = f"{OS_TYPE}, {ARCHITECTURE}"
     raise UnknownArchitectureError(msg)
 
@@ -49,6 +49,7 @@ def download_asset(asset_url: str, tailwind_cli_bin: str | Path) -> Path:
             out_file.write(data)
 
         tailwind_cli = Path(shutil.copy(output_file, tailwind_cli_bin))
+        # make the file executable
         tailwind_cli.chmod(tailwind_cli.stat().st_mode | stat.S_IEXEC)
     return tailwind_cli
 

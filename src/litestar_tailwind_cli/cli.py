@@ -28,7 +28,7 @@ def tailwind_init(app: Litestar):
 
     plugin = app.plugins.get(TailwindCLIPlugin)
     if not plugin.tailwind_cli_is_installed:
-        asset_url = get_asset_url(version=plugin.cli_version)
+        asset_url = get_asset_url(version=plugin.cli_version, src_repo=plugin.src_repo, asset_name=plugin.asset_name)
         with simple_progress(description=f"[blue]Downloading tailwind from {asset_url}"):
             tailwind_cli = download_asset(
                 asset_url=asset_url,

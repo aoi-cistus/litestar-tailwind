@@ -79,6 +79,10 @@ The `TailwindCLIPlugin` has the following configuration options:
 - `config_file`: The path to the Tailwind configuration file. Defaults to "tailwind.config.js".
 - `use_server_lifespan`: Whether to use server lifespan. Defaults to `False`. It will start the Tailwind CLI in watch mode when you use the `litestar run` command.
 - `cli_version`: The version of the Tailwind CLI to download. Defaults to "latest".
+- `src_repo`: The GitHub repository from which to download the Tailwind CLI. Defaults to `tailwindlabs/tailwindcss`.
+- `asset_name`: The name of the asset to download from the repository. Defaults to `tailwindcss`.
+
+For example, if you are using the repository `https://github.com/dobicinaitis/tailwind-cli-extra/tree/main`, you would set `src_repo` to `"dobicinaitis/tailwind-cli-extra"` and `asset_name` to `"tailwindcss-extra"`.
 
 ## License
 

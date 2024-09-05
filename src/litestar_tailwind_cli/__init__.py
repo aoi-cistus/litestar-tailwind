@@ -36,6 +36,8 @@ class TailwindCLIPlugin(CLIPlugin):
     config_file: str | Path = "tailwind.config.js"
     use_server_lifespan: bool = False
     cli_version: str = "latest"
+    src_repo: str = "tailwindlabs/tailwindcss"
+    asset_name: str = "tailwindcss"
     cli_path: str | Path = field(default_factory=_default_cli_path, init=False)
 
     def on_cli_init(self, cli: Group) -> None:

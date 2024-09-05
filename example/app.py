@@ -23,6 +23,7 @@ async def favicon() -> str:
 
 
 tailwind_cli = TailwindCLIPlugin(use_server_lifespan=True)
+# tailwind_cli = TailwindCLIPlugin(use_server_lifespan=True, src_repo="dobicinaitis/tailwind-cli-extra", cli_version="1.7.12", asset_name="tailwindcss-extra")
 
 app = Litestar(
     route_handlers=[index, favicon],
