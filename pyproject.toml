@@ -1,8 +1,6 @@
 [build-system]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
-requires = [
-  "hatchling",
-]
 
 [project]
 name = "litestar-tailwind"
@@ -58,12 +56,7 @@ extra-dependencies = [
 check = "mypy --install-types --non-interactive {args:src/litestar_tailwind_cli tests}"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src"]
-
-[tool.hatch.build.targets.sdist]
-include = [
-  "/src",
-]
+packages = ["src/litestar_tailwind_cli"]
 
 [tool.ruff]
 lint.extend-ignore = [
