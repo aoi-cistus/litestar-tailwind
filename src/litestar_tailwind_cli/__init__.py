@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2024-present Tobi DEGNON <tobidegnon@proton.me>
+# SPDX-FileCopyrightText: 2025 Aoi <aoicistus@gmail.com>
 #
 # SPDX-License-Identifier: MIT
 from __future__ import annotations
@@ -11,7 +12,10 @@ from dataclasses import field
 from pathlib import Path
 from typing import Iterator
 from typing import TYPE_CHECKING
+import shutil
 
+from litestar.config.app import AppConfig
+from litestar.template.base import TemplateEngineProtocol
 from litestar.plugins import CLIPlugin
 from litestar_tailwind_cli.utils import OS_TYPE
 from rich import print as rprint
@@ -23,11 +27,35 @@ if TYPE_CHECKING:
 __all__ = ("TailwindCLIPlugin",)
 
 
-def _default_cli_path() -> Path:
-    bin_path = Path(sys.prefix) / "bin"
-    extension = ".exe" if OS_TYPE == "windows" else ""
-    return bin_path / f"tailwind-cli{extension}"
+def _default_cli_path(
+    conventional_path_resolve: bool = True, custom_bin_name: str = "tailwind-cli"
+) -> Path:
+    if conventional_path_resolve:
+        bin_path = Path(sys.prefix) / "bin"
+        extension = ".exe" if OS_TYPE == "windows" else ""
+        return bin_path / f"{custom_bin_name}{extension}"
+    else:
+        bin_path = Path(sys.prefix) / "bin"
+        extension = ".exe" if OS_TYPE == "windows" else ""
+        location = shutil.which(f"{custom_bin_name}{extension}")
+        if location:
+            return location
+        else:
+            if custom_bin_name == "tailwindcss":
+                return _default_cli_path(custom_bin_name="tailwind")
+            elif custom_bin_name == "tailwind-cli":
+                return _default_cli_path(custom_bin_name="tailwindcss")
+        return bin_path / f"tailwind-cli{extension}"
 
+def get_tailwind_path(dist: str | Path = "css/tailwind.css"):
+    return "static" / dist
+
+def load_tailwind(dist: str | Path = "css/tailwind.css"):
+    tailwind_location = get_tailwind_path(dist)
+    return f"""
+    <link rel="preload" href="{tailwind_location}" as="style" />
+    <link rel="stylesheet" href="{tailwind_location}" />
+    """
 
 @dataclass(frozen=True)
 class TailwindCLIPlugin(CLIPlugin):
@@ -38,7 +66,27 @@ class TailwindCLIPlugin(CLIPlugin):
     cli_version: str = "latest"
     src_repo: str = "tailwindlabs/tailwindcss"
     asset_name: str = "tailwindcss"
-    cli_path: str | Path = field(default_factory=_default_cli_path, init=False)
+    conventional_path_resolve: bool = True
+    cli_path: str | Path | None = field(init=None)
+
+    def __post_init__(self):
+        if self.cli_path is None:
+            object.__setattr__(
+                self, "cli_path", _default_cli_path(self.conventional_path_resolve)
+            )
+
+
+    def on_app_init(self, app_config: AppConfig) -> AppConfig:
+        engine: TemplateEngineProtocol = app_config.template_config.engine_instance
+        engine.register_template_callable(
+            key="tailwind_css",
+            template_callable=lambda: get_tailwind_path(self.dist_css),
+        )
+        engine.register_template_callable(
+            key="load_tailwind",
+            template_callable=lambda: load_tailwind(self.dist_css),
+        )
+        return app_config
 
     def on_cli_init(self, cli: Group) -> None:
         from litestar_tailwind_cli.cli import tailwind_group

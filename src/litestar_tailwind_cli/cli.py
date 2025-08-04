@@ -46,7 +46,7 @@ def tailwind_init(app: Litestar):
     src_css = Path(plugin.src_css)
     if not src_css.exists():
         src_css.parent.mkdir(parents=True, exist_ok=True)
-        src_css.write_text("@tailwind base;\n@tailwind components;\n@tailwind utilities;")
+        src_css.write_text('@import "tailwindcss";')
         rprint(f"[green]Created input css file at {src_css}")
 
 

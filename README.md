@@ -1,4 +1,5 @@
-# litestar-tailwind-cli
+# litestar-tailwind
+forked from Tobi-De/litestar-tailwind-cli with improves
 
 [![PyPI - Version](https://img.shields.io/pypi/v/litestar-tailwind-cli.svg)](https://pypi.org/project/litestar-tailwind-cli)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/litestar-tailwind-cli.svg)](https://pypi.org/project/litestar-tailwind-cli)
@@ -12,16 +13,17 @@ Provides a CLI plugin for [Litestar](https://litestar.dev) to use [Tailwind CSS]
 
 ## Table of Contents
 
-- [litestar-tailwind-cli](#litestar-tailwind-cli)
+- [litestar-tailwind](#litestar-tailwind)
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
   - [Usage](#usage)
   - [License](#license)
+  - [Changes from original](#changes-from-original)
 
 ## Installation
 
 ```console
-pip install litestar-tailwind-cli
+pip install litestar-tailwind
 ```
 
 ## Usage
@@ -78,6 +80,7 @@ The `TailwindCLIPlugin` has the following configuration options:
 - `dist_css`: The path to the distribution CSS file. Defaults to "css/tailwind.css".
 - `config_file`: The path to the Tailwind configuration file. Defaults to "tailwind.config.js".
 - `use_server_lifespan`: Whether to use server lifespan. Defaults to `False`. It will start the Tailwind CLI in watch mode when you use the `litestar run` command.
+- `conventional_path_resolve`: Only use the existing implementation for Tailwind CLI searches. defaults to `True`.
 - `cli_version`: The version of the Tailwind CLI to download. Defaults to "latest".
 - `src_repo`: The GitHub repository from which to download the Tailwind CLI. Defaults to `tailwindlabs/tailwindcss`.
 - `asset_name`: The name of the asset to download from the repository. Defaults to `tailwindcss`.
@@ -86,4 +89,10 @@ For example, if you are using the repository `https://github.com/dobicinaitis/ta
 
 ## License
 
-`litestar-tailwind-cli` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+`litestar-tailwind` and `litestar-tailwind-cli` (original library) is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+ is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+
+## Changes from Original
+- litestar-tailwind now supports tailwindcss v4. v3 is no longer supported.
+- You can now use `{% tailwind_css() %}` to get the location of TailwindCSS's dist CSS. However, TailwindCSS files must be located under the web server's URI, `static`.
+- By using `{% load_tailwind() %}`, you can now automatically load TailwindCSS. However, the same requirements apply as when using `{% tailwind_css() %}`.
